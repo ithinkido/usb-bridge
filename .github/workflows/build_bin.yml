@@ -1,0 +1,78 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+    
+
+env:
+  esp_idf_version: 'v5.2'
+  esp_idf_target: 'esp32s2'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+     contents: write 
+
+    steps:
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
+
+      # - name: Checkout
+      #   uses: actions/checkout@v4
+
+      - name: Checkout ESP USB BRIDGE repo
+        uses: actions/checkout@v4
+        with:
+          repository: espressif/esp-usb-bridge
+
+      - name: Cache esp-idf and its tools
+        id: esp-idf-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/esp/esp-idf
+            ~/.espressif
+            ~/build
+          key: ${{ runner.os }}-esp- $({ esp_idf_version })
+
+      - name: Install ESP-IDF ${{ env.esp_idf_version }}
+        run: |
+          if [[ "${{ steps.esp-idf-cache.outputs.cache-hit }}" == "true" ]]; then
+            echo "Cache hit - skipping dependency installation"
+          else
+            export DEBIAN_FRONTEND=noninteractive; \
+            sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util; \
+            sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10; \
+            mkdir ~/esp; \
+            cd ~/esp; \
+            git clone --recursive https://github.com/espressif/esp-idf.git; \
+            cd ~/esp/esp-idf; \
+            ./install.sh
+          fi
+        shell: bash
+  
+      - name: Build for ${{ env.esp_idf_target }}
+        run: |
+          source ~/esp/esp-idf/export.sh
+          idf.py set-target $esp_idf_target
+          idf.py build 
+          # idf.py app
+          cd build/
+          esptool.py --chip $esp_idf_target merge_bin -o ../output.bin @flash_args
+        shell: bash  
+
+      # - uses: EndBug/add-and-commit@v9
+      #   with:
+      #     message: 'Add latest bin files'
+      #     committer_name: Hard working robot
+      #     default_author: github_actions
+      #     add: 'output.bin --force'
+      #     cwd: '.'  
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: outpur.bin
+
