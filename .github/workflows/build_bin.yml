@@ -65,7 +65,8 @@ jobs:
 
       - name: Move build artifacts
         run: |
-          mv ~/esp_usb_bridge_s2.bin ~/github/workspace
+          ls -l
+          mv esp_usb_bridge_s2.bin ~/github/workspace
 
       - uses: actions/upload-artifact@v2
         with:
