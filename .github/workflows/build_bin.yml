@@ -64,7 +64,7 @@ jobs:
 
       - name: Move build artifacts
         run: |
-          mv esp_usb_bridge_s2.bin ~/bin_files/s2
+          mv esp_usb_bridge_s2.bin ~/bin_files/s2/
 
       - uses: actions/upload-artifact@v3
         with:
