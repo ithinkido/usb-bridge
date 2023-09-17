@@ -62,10 +62,10 @@ jobs:
           esptool.py --chip $esp_idf_target merge_bin -o ../../esp_usb_bridge_s2.bin @flash_args
         shell: bash  
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: esp_usb_bridge_s2
-          path: esp_usb_bridge_s2.bin
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: esp_usb_bridge_s2
+      #     path: esp_usb_bridge_s2.bin
 
       - name: list
         run: |
