@@ -79,4 +79,4 @@ jobs:
           committer_name: Hard working robot
           default_author: github_actions
           add: 'bin_files/s2/esp_usb_bridge_s2.bin'
-          cwd: ~/bin_files/s2/
+          cwd: '~/bin_files/s2'
