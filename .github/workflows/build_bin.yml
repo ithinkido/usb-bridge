@@ -60,19 +60,19 @@ jobs:
           idf.py build 
           # idf.py app
           cd build/
-          esptool.py --chip $esp_idf_target merge_bin -o ../output.bin @flash_args
+          esptool.py --chip $esp_idf_target merge_bin -o ../esp_usb_bridge_s2.bin @flash_args
         shell: bash  
 
-      # - uses: EndBug/add-and-commit@v9
-      #   with:
-      #     message: 'Add latest bin files'
-      #     committer_name: Hard working robot
-      #     default_author: github_actions
-      #     add: 'output.bin --force'
-      #     cwd: '.'  
+      - uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Add latest s2 bin files'
+          committer_name: Hard working robot
+          default_author: github_actions
+          add: 'esp_usb_bridge_s2.bin --force'
+          cwd: '~/bin_files/s2/'  
 
       - uses: actions/upload-artifact@v3
         with:
-          name: esp-usb-bridge bin
-          path: output.bin
+          name: esp-usb-bridge-s2 bin
+          path: esp_usb_bridge_s2.bin
 

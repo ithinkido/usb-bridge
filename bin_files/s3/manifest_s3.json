@@ -1,0 +1,14 @@
+{
+    "name": "ESP-USB-BRIDGE",
+    "improv": false,
+    "new_install_prompt_erase": true,
+    "builds": [
+      {
+        "chipFamily": "ESP32S3",
+        "parts": [
+          { "path": "esp_usb_bridge_s3.bin", "offset": 0 }
+        ]
+      }
+    ]
+  }
+  
