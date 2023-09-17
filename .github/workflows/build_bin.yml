@@ -16,11 +16,10 @@ jobs:
      contents: write 
 
     steps:
-      # - name: Checkout code
-      #   uses: actions/checkout@v2
-
-      # - name: Checkout
-      #   uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: 
+          path: ./current
 
       - name: Checkout ESP USB BRIDGE repo
         uses: actions/checkout@v4
@@ -66,7 +65,7 @@ jobs:
       - name: Move build artifacts
         run: |
           ls -l
-          mv esp_usb_bridge_s2.bin ~/github/workspace
+          mv esp_usb_bridge_s2.bin ~/current/bin_file/s2
 
       - uses: actions/upload-artifact@v2
         with:
