@@ -62,10 +62,15 @@ jobs:
           esptool.py --chip $esp_idf_target merge_bin -o ../../esp_usb_bridge_s2.bin @flash_args
         shell: bash  
 
+      - name: Move build artifacts
+        run: |
+          ls -l
+          mv esp_usb_bridge_s2.bin bin_files/s2/
+
       # - uses: actions/upload-artifact@v3
       #   with:
       #     name: esp_usb_bridge_s2
-      #     path: esp_usb_bridge_s2.bin
+      #     path: bin_files/s2/esp_usb_bridge_s2.bin
 
       - name: list
         run: |
@@ -78,4 +83,4 @@ jobs:
           committer_name: Hard working robot
           default_author: github_actions
           add: 'esp_usb_bridge_s2.bin'
-          cwd: '.'
+          cwd: './bin_files/s2'
