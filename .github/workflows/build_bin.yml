@@ -63,16 +63,20 @@ jobs:
           esptool.py --chip $esp_idf_target merge_bin -o ../esp_usb_bridge_s2.bin @flash_args
         shell: bash  
 
-      - uses: EndBug/add-and-commit@v9
+      - name: Move build artifacts
+        run: |
+          mv ~/esp_usb_bridge_s2.bin ~/github/workspace
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: esp_usb_bridge_s2
+          path: esp_usb_bridge_s2.bin
+
+      - name: Add and Commit
+        uses: EndBug/add-and-commit@v9
         with:
           message: 'Add latest s2 bin files'
           committer_name: Hard working robot
           default_author: github_actions
-          add: 'esp_usb_bridge_s2.bin --force'
-          cwd: '~/bin_files/s2/'  
-
-      - uses: actions/upload-artifact@v3
-        with:
-          name: esp-usb-bridge-s2 bin
-          path: esp_usb_bridge_s2.bin
-
+          add: 'esp_usb_bridge_s2.bin'
+          cwd: ~/github/workspace
