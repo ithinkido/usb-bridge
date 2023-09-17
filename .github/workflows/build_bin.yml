@@ -53,8 +53,12 @@ jobs:
   
       - name: Build for ${{ env.esp_idf_target }}
         run: |
+          
           source ~/esp/esp-idf/export.sh
           idf.py set-target $esp_idf_target
+          ls -l
+          ####after
+          ls -l ../
           idf.py build 
           # idf.py app
           cd build/
@@ -68,10 +72,10 @@ jobs:
           ls -l ../
           mv esp_usb_bridge_s2.bin ~/current/bin_file/s2
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: esp_usb_bridge_s2
-          path: esp_usb_bridge_s2.bin
+          path: esp/esp_usb_bridge_s2.bin
 
       - name: Add and Commit
         uses: EndBug/add-and-commit@v9
