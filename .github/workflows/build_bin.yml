@@ -18,13 +18,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with: 
-          path: ./current
 
-      - name: Checkout ESP USB BRIDGE repo
+      - name: Checkout tools repo
         uses: actions/checkout@v4
         with:
           repository: espressif/esp-usb-bridge
+          path: esp
 
       - name: Cache esp-idf and its tools
         id: esp-idf-cache
@@ -65,6 +64,8 @@ jobs:
       - name: Move build artifacts
         run: |
           ls -l
+          ####after
+          ls -l ../
           mv esp_usb_bridge_s2.bin ~/current/bin_file/s2
 
       - uses: actions/upload-artifact@v2
