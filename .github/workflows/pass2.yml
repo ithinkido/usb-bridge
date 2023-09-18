@@ -28,7 +28,7 @@ jobs:
             ~/esp/esp-idf
             ~/.espressif
             ~/build
-          key: ${{ runner.os }}-IDF ver-$({ esp_idf_version })
+          key: ${{ runner.os }}-IDF ver-$({ env.esp_idf_version })
 
       - name: Install ESP-IDF ${{ env.esp_idf_version }}
         run: |
@@ -65,7 +65,7 @@ jobs:
             ~/esp/esp-idf
             ~/.espressif
             ~/build
-          key: ${{ runner.os }}-IDF ver-$({ esp_idf_version })
+          key: ${{ runner.os }}-IDF ver-$({ env.esp_idf_version })
 
 
 
