@@ -74,20 +74,12 @@ jobs:
           ls -l
           # mkdir -p bin_files/${{ matrix.esp_idf_chip }}
           mv esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin bin_files/${{ matrix.esp_idf_chip }}/
-        continue-on-error: true
 
-  add_and_commit:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Add and Commit
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: 'Add latest s2 and s3 bin files'
-          committer_name: Hard working robot
-          default_author: github_actions
-          add: 'bin_files/s2/esp_usb_bridge_s2.bin bin_files/s3/esp_usb_bridge_s3.bin --force'
-          cwd: './'
+      # - name: add_and_commit
+      #   uses: EndBug/add-and-commit@v9
+      #   with:
+      #     message: 'Add latest s2 and s3 bin files'
+      #     committer_name: Hard working robot
+      #     default_author: github_actions
+      #     add: 'bin_files/s2/esp_usb_bridge_s2.bin bin_files/s3/esp_usb_bridge_s3.bin --force'
+      #     cwd: './'
