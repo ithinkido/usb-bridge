@@ -89,5 +89,5 @@ jobs:
           message: 'Add latest ${{ matrix.esp_idf_chip }} bin files'
           committer_name: Hard working robot
           default_author: github_actions
-          add: 'bin_files/${{ matrix.esp_idf_chip }}/esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin --force'
+          add: 'esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin --force'
           cwd: './bin_files/${{ matrix.esp_idf_chip }}'
