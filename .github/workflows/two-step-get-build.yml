@@ -64,5 +64,6 @@ jobs:
         run: |
           ls -a -l
 
-      # Add more steps here to build or perform actions with esp-usb-bridge
-
+      - name: list  esp
+        run: |
+          ls -a -l /esp
