@@ -19,7 +19,7 @@ jobs:
         id: check_cache
         with:
           path: |
-            ~/esp/esp-idf
+            ~/esp
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}
 
@@ -32,7 +32,7 @@ jobs:
           mkdir ~/esp; \
           cd ~/esp; \
           git clone --recursive https://github.com/espressif/esp-idf.git; \
-          cd ~/esp/esp-idf; \
+          cd ~/esp; \
           ./install.sh
         shell: bash
 
@@ -41,7 +41,7 @@ jobs:
         uses: martijnhols/actions-cache/save@v3
         with:
           path: |
-            ~/esp/esp-idf
+            ~/esp
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}  
 
@@ -59,7 +59,7 @@ jobs:
         uses: martijnhols/actions-cache/restore@v3
         with:
             path: |
-              ~/esp/esp-idf
+              ~/esp
               ~/.espressif
             key: ESP-IDF ver-${{ env.esp_idf_version }}  
             required: true
@@ -115,7 +115,7 @@ jobs:
         uses: martijnhols/actions-cache/restore@v3
         with:
             path: |
-              ~/esp/esp-idf
+              ~/esp
               ~/.espressif
             key: ESP-IDF ver-${{ env.esp_idf_version }}  
             required: true
@@ -149,7 +149,7 @@ jobs:
       #       mkdir ~/esp; \
       #       cd ~/esp; \
       #       git clone --recursive https://github.com/espressif/esp-idf.git; \
-      #       cd ~/esp/esp-idf; \
+      #       cd ~/esp; \
       #       ./install.sh
       #     fi
       #   shell: bash
@@ -157,7 +157,7 @@ jobs:
       - name: Build for ${{ matrix.esp_idf_target }}
         run: |
           cd esp/
-          source ~/esp/esp-idf/export.sh
+          source ~/esp/export.sh
           idf.py set-target ${{ matrix.esp_idf_target }}
           idf.py build
           # idf.py app
