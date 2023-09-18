@@ -69,6 +69,14 @@ jobs:
             ~/esp
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}
+          
+      - name: list  
+        run: |
+          ls -a -l
+
+      - name: list  esp dir
+        run: |
+          ls -a -l esp/          
 
       # - name: Install ESP-IDF ${{ env.esp_idf_version }}
       #   run: |
