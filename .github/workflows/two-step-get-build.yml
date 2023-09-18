@@ -36,7 +36,7 @@ jobs:
           ./install.sh
         shell: bash
 
-      - name: Save "node_modules" to cache
+      - name: Save "ESP-IDF" to cache
         if: steps.check_cache.outputs.cache-hit != 'true'
         uses: martijnhols/actions-cache/save@v3
         with:
@@ -64,12 +64,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout tools repo
-        uses: actions/checkout@v4
-        with:
-          repository: espressif/esp-usb-bridge
-          path: esp
-
       - name: Cache esp-idf and its tools
         id: esp-idf-cache
         uses: actions/cache@v3
@@ -78,7 +72,13 @@ jobs:
             ~/esp
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}
-          
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: espressif/esp-usb-bridge
+          path: esp
+ 
       - name: list  
         run: |
           ls -a -l
