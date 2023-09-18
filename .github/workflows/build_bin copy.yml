@@ -1,19 +1,24 @@
 name: Build
 
 on:
-  # push:
+  push:
   workflow_dispatch:
-    
 
 env:
   esp_idf_version: 'v5.2'
-  esp_idf_target: 'esp32s2'
+  esp_idf_targets: 'esp32s2 esp32s3'
+  esp_idf_chips: 's2 s3'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-     contents: write 
+      contents: write 
+
+    strategy:
+      matrix:
+        target: ${{ split(env.esp_idf_targets, ' ') }}
+        chip: ${{ split(env.esp_idf_chips, ' ') }}
 
     steps:
       - name: Checkout
@@ -33,7 +38,7 @@ jobs:
             ~/esp/esp-idf
             ~/.espressif
             ~/build
-          key: ${{ runner.os }}-esp- $({ esp_idf_version })
+          key: ${{ runner.os }}-esp-${{ matrix.target }}-${{ env.esp_idf_version }}
 
       - name: Install ESP-IDF ${{ env.esp_idf_version }}
         run: |
@@ -50,37 +55,33 @@ jobs:
             ./install.sh
           fi
         shell: bash
-  
-      - name: Build for ${{ env.esp_idf_target }}
+
+      - name: Build for ${{ matrix.target }} - ${{ matrix.chip }}
         run: |
           cd esp/
           source ~/esp/esp-idf/export.sh
-          idf.py set-target $esp_idf_target
-          idf.py build 
+          idf.py set-target ${{ matrix.target }}
+          idf.py build
           # idf.py app
           cd build/
-          esptool.py --chip $esp_idf_target merge_bin -o ../../esp_usb_bridge_s2.bin @flash_args
-        shell: bash  
+          esptool.py --chip ${{ matrix.chip }} merge_bin -o ../../esp_usb_bridge_${{ matrix.chip }}.bin @flash_args
+        shell: bash
 
       - name: Move build artifacts
         run: |
           ls -l
-          mv esp_usb_bridge_s2.bin bin_files/s2/
+          mv esp_usb_bridge_${{ matrix.chip }}.bin bin_files/${{ matrix.chip }}/
 
       - uses: actions/upload-artifact@v3
         with:
-          name: esp_usb_bridge_s2
-          path: bin_files/s2/esp_usb_bridge_s2.bin
-
-      - name: list
-        run: |
-          ls -l
+          name: esp_usb_bridge_${{ matrix.chip }}
+          path: bin_files/${{ matrix.chip }}/
 
       - name: Add and Commit
         uses: EndBug/add-and-commit@v9
         with:
-          message: 'Add latest s2 bin files'
+          message: 'Add latest ${{ matrix.chip }} bin files'
           committer_name: Hard working robot
           default_author: github_actions
-          add: 'esp_usb_bridge_s2.bin --force'
-          cwd: './bin_files/s2'
+          add: 'bin_files/${{ matrix.chip }}/esp_usb_bridge_${{ matrix.chip }}.bin --force'
+          cwd: './bin_files/${{ matrix.chip }}'
