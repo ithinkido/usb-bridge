@@ -28,7 +28,23 @@ jobs:
             ~/esp/esp-idf
             ~/.espressif
             ~/build
-          key: ${{ runner.os }}-esp-${{ github.sha }}-${{ env.esp_idf_version }}
+          key: ${{ runner.os }}-ver-${{ env.esp_idf_version }}
+
+      - name: Install ESP-IDF ${{ env.esp_idf_version }}
+        run: |
+          if [[ "${{ steps.cache_esp_idf.outputs.cache-hit }}" == "true" ]]; then
+            echo "Cache hit - skipping dependency installation"
+          else
+            export DEBIAN_FRONTEND=noninteractive; \
+            sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util; \
+            sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10; \
+            mkdir ~/esp; \
+            cd ~/esp; \
+            git clone --recursive https://github.com/espressif/esp-idf.git; \
+            cd ~/esp/esp-idf; \
+            ./install.sh
+          fi
+        shell: bash
 
   build_bin_files:
     runs-on: ubuntu-latest
@@ -51,21 +67,7 @@ jobs:
             ~/build
           key: ${{ runner.os }}-esp-${{ github.sha }}-${{ env.esp_idf_version }}
 
-      - name: Install ESP-IDF ${{ env.esp_idf_version }}
-        run: |
-          if [[ "${{ steps.cache_esp_idf.outputs.cache-hit }}" == "true" ]]; then
-            echo "Cache hit - skipping dependency installation"
-          else
-            export DEBIAN_FRONTEND=noninteractive; \
-            sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util; \
-            sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10; \
-            mkdir ~/esp; \
-            cd ~/esp; \
-            git clone --recursive https://github.com/espressif/esp-idf.git; \
-            cd ~/esp/esp-idf; \
-            ./install.sh
-          fi
-        shell: bash
+
 
       - name: Build bin file for ${{ matrix.esp_idf_targets }}
         run: |
