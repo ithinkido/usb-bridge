@@ -1,7 +1,5 @@
-name: Build
-
 on:
-  # push:
+  push:
   workflow_dispatch:
 
 env:
@@ -27,7 +25,8 @@ jobs:
           path: |
             ~/esp
             ~/.espressif
-          key: ESP-IDF ver-$({ env.esp_idf_version })
+          key: ESP-IDF ver-${{ env.esp_idf_version }}
+
 
       - name: Install ESP-IDF ${{ env.esp_idf_version }}
         run: |
