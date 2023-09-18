@@ -12,14 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  
 
       - name: Cache ESP-IDF
         uses: martijnhols/actions-cache/check@v3
         id: check_cache
         with:
           path: |
-            ~/esp
+            ~/esp/esp-idf
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}
 
@@ -45,8 +45,55 @@ jobs:
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}  
 
-  build:
+  get-esp-usb-bridge:
     needs: cache_esp_idf
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore " espidf" from cache
+        uses: martijnhols/actions-cache/restore@v3
+        with:
+            path: |
+              ~/esp/esp-idf
+              ~/.espressif
+            key: ESP-IDF ver-${{ env.esp_idf_version }}  
+            required: true
+
+      - name: list  esp dir
+        run: |
+          ls -a -l esp/ 
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: espressif/esp-usb-bridge
+          path: esp
+ 
+      - name: list  
+        run: |
+          ls -a -l
+
+      - name: list  esp dir
+        run: |
+          ls -a -l esp/          
+
+      - name: Save "ESP-IDF" to cache
+        if: steps.check_cache.outputs.cache-hit != 'true'
+        uses: martijnhols/actions-cache/save@v3
+        with:
+          path: |
+            ~/esp
+            ~/.espressif
+          key: ESP-IDF ver-${{ env.esp_idf_version }}  
+
+
+  build:
+    needs: get-esp-usb-bridge
     runs-on: ubuntu-latest
     permissions:
       contents: write 
@@ -64,14 +111,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache esp-idf and its tools
-        id: esp-idf-cache
-        uses: actions/cache@v3
+      - name: Restore " espidf" from cache
+        uses: martijnhols/actions-cache/restore@v3
         with:
-          path: |
-            ~/esp/esp-idf
-            ~/.espressif
-          key: ESP-IDF ver-${{ env.esp_idf_version }}
+            path: |
+              ~/esp/esp-idf
+              ~/.espressif
+            key: ESP-IDF ver-${{ env.esp_idf_version }}  
+            required: true
+
+      - name: list  esp dir
+        run: |
+          ls -a -l esp/ 
 
       - name: Checkout tools repo
         uses: actions/checkout@v4
