@@ -14,13 +14,7 @@ jobs:
       - name: Checkout current repo
         uses: actions/checkout@v4
 
-      - name: Checkout esp-usb-bridge repo
-        uses: actions/checkout@v4
-        with:
-          repository: espressif/esp-usb-bridge
-          path: esp
-
-      - name: Cache esp-idf and its tools
+      - name: Cache ESP-IDF
         id: esp-idf-cache
         uses: actions/cache@v3
         with:
@@ -43,13 +37,29 @@ jobs:
         shell: bash
 
   get_latest_esp_usb_bridge:
+    needs:  cache_esp_idf
     runs-on: ubuntu-latest
     steps:
+
+      - name: Cache ESP-IDF
+        id: esp-idf-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/esp
+            ~/.espressif
+          key: ESP-IDF ver-${{ env.esp_idf_version }}
+          run: |
+            ls -a -l
+
       - name: Checkout esp-usb-bridge repo
         uses: actions/checkout@v4
         with:
           repository: espressif/esp-usb-bridge
           path: esp
+          run: |
+            ls -a -l
+
 
       # Add more steps here to build or perform actions with esp-usb-bridge
 

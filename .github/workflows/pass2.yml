@@ -18,7 +18,7 @@ jobs:
           repository: espressif/esp-usb-bridge
           path: esp
 
-      - name: Cache esp-idf and its tools
+      - name: Cache ESP-IDF
         id: esp-idf-cache
         uses: actions/cache@v3
         with:
