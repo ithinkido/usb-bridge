@@ -58,15 +58,18 @@ jobs:
           fi
         shell: bash
 
-      - name: Build for ${{ matrix.esp_idf_target }} - ${{ matrix.esp_idf_chip }}
+      - name: Build for ${{ matrix.esp_idf_target }}
         run: |
           cd esp/
           source ~/esp/esp-idf/export.sh
           idf.py set-target ${{ matrix.esp_idf_target }}
           idf.py build
           # idf.py app
+          ls -l
           cd build/
-          esptool.py --chip ${{ matrix.esp_idf_chip }} merge_bin -o ../../esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin @flash_args
+          ls -l
+          echo --chip ${{ matrix.esp_idf_target }} 
+          esptool.py --chip ${{ matrix.esp_idf_target }} merge_bin -o ../../esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin @flash_args
         shell: bash
 
       - name: Move build artifacts
@@ -78,7 +81,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: esp_usb_bridge_${{ matrix.esp_idf_chip }}
-          path: bin_files/${{ matrix.esp_idf_chip }}/
+          path: bin_files/${{ matrix.esp_idf_chip }}/esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin
 
       - name: Add and Commit
         uses: EndBug/add-and-commit@v9
