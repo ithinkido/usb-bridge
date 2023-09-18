@@ -1,7 +1,7 @@
 name: Build
 
 on:
-  # push:
+  push:
   workflow_dispatch:
 
 env:
@@ -15,12 +15,15 @@ jobs:
 
     strategy:
       matrix:
-        # esp_idf_targets: [esp32s2, esp32s3]
         include:
           - esp_idf_target: esp32s2
             esp_idf_chip: s2
           - esp_idf_target: esp32s3
             esp_idf_chip: s3
+
+    outputs:
+      s2_bin: ${{ steps.build_s2.outputs.bin_path }}
+      s3_bin: ${{ steps.build_s3.outputs.bin_path }}
 
     steps:
       - name: Checkout
@@ -59,14 +62,15 @@ jobs:
         shell: bash
 
       - name: Build for ${{ matrix.esp_idf_target }}
+        id: build_${{ matrix.esp_idf_chip }}
         run: |
           cd esp/
           source ~/esp/esp-idf/export.sh
           idf.py set-target ${{ matrix.esp_idf_target }}
           idf.py build
-          # idf.py app
           cd build/
           esptool.py --chip ${{ matrix.esp_idf_target }} merge_bin -o ../../esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin @flash_args
+          echo "::set-output name=bin_path::../../esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin"
         shell: bash
 
       - name: Move build artifacts
@@ -74,12 +78,21 @@ jobs:
           ls -l
           mv esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin bin_files/${{ matrix.esp_idf_chip }}/
 
+  add_and_commit:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: add_and_commit
-        if: ${{ github.ref == 'ref/heads/main' }}
         uses: EndBug/add-and-commit@v9
         with:
           message: 'Add latest s2 and s3 bin files'
           committer_name: Hard working robot
           default_author: github_actions
-          add: 'bin_files/s2/esp_usb_bridge_s2.bin bin_files/s3/esp_usb_bridge_s3.bin --force'
+          add: '${{ needs.build.outputs.s2_bin }} ${{ needs.build.outputs.s3_bin }} --force'
           cwd: './'
