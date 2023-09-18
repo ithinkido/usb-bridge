@@ -4,7 +4,7 @@
     "new_install_prompt_erase": true,
     "builds": [
       {
-        "chipFamily": "ESP32S2",
+        "chipFamily": "ESP32-S2",
         "parts": [
           { "path": "esp_usb_bridge_s2.bin", "offset": 0 }
         ]
