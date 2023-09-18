@@ -62,7 +62,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ~/esp/esp-idf
+            ~/esp
             ~/.espressif
             ~/build
           key: ${{ runner.os }}-IDF ver-$({ env.esp_idf_version })
