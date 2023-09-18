@@ -36,6 +36,15 @@ jobs:
           ./install.sh
         shell: bash
 
+      - name: Save "node_modules" to cache
+        if: steps.check_cache.outputs.cache-hit != 'true'
+        uses: martijnhols/actions-cache/save@v3
+        with:
+          path: |
+            ~/esp
+            ~/.espressif
+          key: ESP-IDF ver-${{ env.esp_idf_version }}  
+
   build:
     needs: cache_esp_idf
     runs-on: ubuntu-latest
