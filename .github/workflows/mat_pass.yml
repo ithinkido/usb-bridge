@@ -58,7 +58,6 @@ jobs:
         shell: bash
 
       - name: Build for ${{ matrix.esp_idf_targets }}
-        id: build_${{ matrix.esp_idf_targets }}
         run: |
           cd esp/
           source ~/esp/esp-idf/export.sh
