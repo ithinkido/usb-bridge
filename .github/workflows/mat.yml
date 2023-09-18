@@ -1,0 +1,143 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  esp_idf_version: 'v5.2'
+
+jobs:
+  build_s2:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: espressif/esp-usb-bridge
+          path: esp
+
+      - name: Cache esp-idf and its tools
+        id: esp-idf-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/esp/esp-idf
+            ~/.espressif
+            ~/build
+          key: ${{ runner.os }}-esp-esp32s2-${{ env.esp_idf_version }}
+
+      - name: Install ESP-IDF ${{ env.esp_idf_version }}
+        run: |
+          if [[ "${{ steps.esp-idf-cache.outputs.cache-hit }}" == "true" ]]; then
+            echo "Cache hit - skipping dependency installation"
+          else
+            export DEBIAN_FRONTEND=noninteractive; \
+            sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util; \
+            sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10; \
+            mkdir ~/esp; \
+            cd ~/esp; \
+            git clone --recursive https://github.com/espressif/esp-idf.git; \
+            cd ~/esp/esp-idf; \
+            ./install.sh
+          fi
+        shell: bash
+
+      - name: Build for ESP32-S2
+        run: |
+          cd esp/
+          source ~/esp/esp-idf/export.sh
+          idf.py set-target esp32s2
+          idf.py build
+          # idf.py app
+          cd build/
+          esptool.py --chip s2 merge_bin -o ../../esp_usb_bridge_s2.bin @flash_args
+        shell: bash
+
+      - name: Move build artifacts
+        run: |
+          ls -l
+          mkdir -p bin_files/s2
+          mv esp_usb_bridge_s2.bin bin_files/s2/
+        continue-on-error: true
+
+  build_s3:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout tools repo
+        uses: actions/checkout@v4
+        with:
+          repository: espressif/esp-usb-bridge
+          path: esp
+
+      - name: Cache esp-idf and its tools
+        id: esp-idf-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/esp/esp-idf
+            ~/.espressif
+            ~/build
+          key: ${{ runner.os }}-esp-esp32s3-${{ env.esp_idf_version }}
+
+      - name: Install ESP-IDF ${{ env.esp_idf_version }}
+        run: |
+          if [[ "${{ steps.esp-idf-cache.outputs.cache-hit }}" == "true" ]]; then
+            echo "Cache hit - skipping dependency installation"
+          else
+            export DEBIAN_FRONTEND=noninteractive; \
+            sudo apt-get install -y git wget flex bison gperf python3 python3-pip python3-setuptools cmake ninja-build ccache libffi-dev libssl-dev dfu-util; \
+            sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10; \
+            mkdir ~/esp; \
+            cd ~/esp; \
+            git clone --recursive https://github.com/espressif/esp-idf.git; \
+            cd ~/esp/esp-idf; \
+            ./install.sh
+          fi
+        shell: bash
+
+      - name: Build for ESP32-S3
+        run: |
+          cd esp/
+          source ~/esp/esp-idf/export.sh
+          idf.py set-target esp32s3
+          idf.py build
+          # idf.py app
+          cd build/
+          esptool.py --chip s3 merge_bin -o ../../esp_usb_bridge_s3.bin @flash_args
+        shell: bash
+
+      - name: Move build artifacts
+        run: |
+          ls -l
+          mkdir -p bin_files/s3
+          mv esp_usb_bridge_s3.bin bin_files/s3/
+        continue-on-error: true
+
+  add_and_commit:
+    needs: [build_s2, build_s3]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add and Commit
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Add latest s2 and s3 bin files'
+          committer_name: Hard working robot
+          default_author: github_actions
+          add: 'bin_files/s2/esp_usb_bridge_s2.bin bin_files/s3/esp_usb_bridge_s3.bin --force'
+          cwd: './'
