@@ -32,7 +32,6 @@ jobs:
           mkdir ~/esp; \
           cd ~/esp; \
           git clone --recursive https://github.com/espressif/esp-idf.git; \
-          ls -l; \
           cd ./esp-idf; \
           ./install.sh
         shell: bash
@@ -65,9 +64,9 @@ jobs:
             key: ESP-IDF ver-${{ env.esp_idf_version }}  
             required: true
 
-      - name: list  esp dir
+      - name: list  
         run: |
-          ls -a -l esp/ 
+          ls -a -l 
 
       - name: Checkout tools repo
         uses: actions/checkout@v4
