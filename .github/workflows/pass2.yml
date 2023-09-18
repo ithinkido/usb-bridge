@@ -11,10 +11,10 @@ jobs:
   cache_esp_idf:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout current repo
         uses: actions/checkout@v4
 
-      - name: Checkout tools repo
+      - name: Checkout esp-usb-bridge repo
         uses: actions/checkout@v4
         with:
           repository: espressif/esp-usb-bridge
@@ -28,7 +28,7 @@ jobs:
             ~/esp/esp-idf
             ~/.espressif
             ~/build
-          key: ${{ runner.os }}-esp- $({ esp_idf_version })
+          key: ${{ runner.os }}-IDF ver-$({ esp_idf_version })
 
       - name: Install ESP-IDF ${{ env.esp_idf_version }}
         run: |
@@ -65,12 +65,13 @@ jobs:
             ~/esp/esp-idf
             ~/.espressif
             ~/build
-          key: ${{ runner.os }}-esp-${{ github.sha }}-${{ env.esp_idf_version }}
+          key: ${{ runner.os }}-IDF ver-$({ esp_idf_version })
 
 
 
       - name: Build bin file for ${{ matrix.esp_idf_targets }}
         run: |
+          ls -l
           cd esp/
           source ~/esp/esp-idf/export.sh
           idf.py set-target ${{ matrix.esp_idf_targets }}
