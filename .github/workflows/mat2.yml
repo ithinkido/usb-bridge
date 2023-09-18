@@ -16,7 +16,11 @@ jobs:
     strategy:
       matrix:
         esp_idf_targets: [esp32s2, esp32s3]
-        esp_idf_chips: [s2, s3]
+        include:
+          - esp_idf_target: esp32s2
+            esp_idf_chip: s2
+          - esp_idf_target: esp32s3
+            esp_idf_chip: s3
 
     steps:
       - name: Checkout
@@ -54,7 +58,7 @@ jobs:
           fi
         shell: bash
 
-      - name: Build for ${{ matrix.esp_idf_target }} - ${{ matrix.esp_idf_chip }}
+      - name: Build for ${{ matrix.esp_idf_target }}
         run: |
           cd esp/
           source ~/esp/esp-idf/export.sh
@@ -62,13 +66,13 @@ jobs:
           idf.py build
           # idf.py app
           cd build/
-          esptool.py --chip ${{ matrix.esp_idf_chip }} merge_bin -o ../../esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin @flash_args
+          esptool.py --chip ${{ matrix.esp_idf_target }} merge_bin -o ../../esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin @flash_args
         shell: bash
 
       - name: Move build artifacts
         run: |
           ls -l
-          mkdir -p bin_files/${{ matrix.esp_idf_chip }}
+          # mkdir -p bin_files/${{ matrix.esp_idf_chip }}
           mv esp_usb_bridge_${{ matrix.esp_idf_chip }}.bin bin_files/${{ matrix.esp_idf_chip }}/
         continue-on-error: true
 
