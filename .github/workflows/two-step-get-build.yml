@@ -49,17 +49,20 @@ jobs:
             ~/esp
             ~/.espressif
           key: ESP-IDF ver-${{ env.esp_idf_version }}
-          run: |
-            ls -a -l
+        
+      - name: list  
+        run: |
+          ls -a -l
 
       - name: Checkout esp-usb-bridge repo
         uses: actions/checkout@v4
         with:
           repository: espressif/esp-usb-bridge
           path: esp
-          run: |
-            ls -a -l
 
+      - name: list  
+        run: |
+          ls -a -l
 
       # Add more steps here to build or perform actions with esp-usb-bridge
 
