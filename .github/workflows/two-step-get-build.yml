@@ -32,7 +32,7 @@ jobs:
           mkdir ~/esp; \
           cd ~/esp; \
           git clone --recursive https://github.com/espressif/esp-idf.git; \
-          ls -l
+          ls -l; \
           cd ~/esp-idf; \
           ./install.sh
         shell: bash
