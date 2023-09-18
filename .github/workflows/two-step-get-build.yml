@@ -14,6 +14,12 @@ jobs:
       - name: Checkout current repo
         uses: actions/checkout@v4
 
+      - name: Checkout esp-usb-bridge repo
+        uses: actions/checkout@v4
+        with:
+          repository: espressif/esp-usb-bridge
+          path: esp
+
       - name: Cache esp-idf and its tools
         id: esp-idf-cache
         uses: actions/cache@v3
@@ -21,7 +27,7 @@ jobs:
           path: |
             ~/esp
             ~/.espressif
-          key: ESP-IDF ver-$({ env.esp_idf_version })
+          key: ESP-IDF ver-${{ env.esp_idf_version }}
 
       - name: Install ESP-IDF ${{ env.esp_idf_version }}
         if: steps.esp-idf-cache.outputs.cache-hit != 'true'
