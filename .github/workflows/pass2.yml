@@ -25,9 +25,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            ~/esp/esp-idf
+            ~/esp
             ~/.espressif
-            ~/build
           key: ${{ runner.os }}-IDF ver-$({ env.esp_idf_version })
 
       - name: Install ESP-IDF ${{ env.esp_idf_version }}
@@ -44,6 +43,7 @@ jobs:
             cd ~/esp/esp-idf; \
             ./install.sh
           fi
+          ls -a -l
         shell: bash
 
   build_bin_files:
