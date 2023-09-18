@@ -122,7 +122,7 @@ jobs:
 
       - name: list  esp dir
         run: |
-          ls -a -l esp/ 
+          ls -a -l 
 
       - name: Checkout tools repo
         uses: actions/checkout@v4
